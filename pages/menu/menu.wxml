@@ -1,0 +1,50 @@
+<view class="page menu-page">
+  <view class="hero">
+    <view>
+      <text class="eyebrow">家庭电子菜单</text>
+      <view class="title">今晚想吃什么</view>
+    </view>
+    <view class="summary">
+      <text>{{totalCount}}</text>
+      <text>份</text>
+    </view>
+  </view>
+
+  <view class="dish-list">
+    <view class="dish-card" wx:for="{{dishes}}" wx:key="id">
+      <view class="dish-main">
+        <view class="dish-head">
+          <text class="dish-name">{{item.name}}</text>
+          <text class="dish-price">¥{{item.price}}</text>
+        </view>
+        <text class="dish-category">{{item.category}}</text>
+        <text class="dish-desc">{{item.description}}</text>
+      </view>
+      <view class="counter">
+        <button class="counter-button" data-id="{{item.id}}" bindtap="decrease">-</button>
+        <text class="counter-value">{{item.count}}</text>
+        <button class="counter-button add" data-id="{{item.id}}" bindtap="increase">+</button>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{!dishes.length}}" class="empty">
+    <text>暂无可点菜品</text>
+  </view>
+
+  <view class="note-panel">
+    <text class="section-title">备注</text>
+    <textarea value="{{note}}" bindinput="onNoteInput" placeholder="例如：少油、不要辣、米饭多一点" maxlength="80" />
+  </view>
+
+  <view class="checkout-bar">
+    <view>
+      <text class="checkout-label">合计</text>
+      <view class="checkout-price">¥{{totalPrice}}</view>
+    </view>
+    <view class="checkout-actions">
+      <button class="secondary-button" bindtap="resetCart">重置</button>
+      <button class="primary-button" bindtap="submitOrder">提交</button>
+    </view>
+  </view>
+</view>

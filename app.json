@@ -1,0 +1,31 @@
+{
+  "pages": [
+    "pages/menu/menu",
+    "pages/service/service"
+  ],
+  "window": {
+    "navigationBarTitleText": "家庭菜单",
+    "navigationBarBackgroundColor": "#f7f1e5",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#fbfaf6"
+  },
+  "tabBar": {
+    "color": "#697077",
+    "selectedColor": "#1f7a5b",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/menu/menu",
+        "text": "点餐"
+      },
+      {
+        "pagePath": "pages/service/service",
+        "text": "服务"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}
+

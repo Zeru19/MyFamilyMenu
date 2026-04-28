@@ -1,0 +1,196 @@
+.service-page {
+  padding-bottom: 40rpx;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx;
+  border-radius: 8rpx;
+  background: #e7f0eb;
+}
+
+.eyebrow {
+  color: #52685f;
+  font-size: 24rpx;
+}
+
+.title {
+  margin-top: 8rpx;
+  font-size: 42rpx;
+  font-weight: 800;
+}
+
+.refresh-button {
+  width: 132rpx;
+  height: 64rpx;
+  line-height: 64rpx;
+}
+
+.section {
+  margin-top: 28rpx;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mini-button {
+  min-width: 104rpx;
+  height: 56rpx;
+  padding: 0 18rpx;
+  font-size: 24rpx;
+  line-height: 56rpx;
+}
+
+.empty {
+  padding: 48rpx 0;
+  color: #68737d;
+  text-align: center;
+}
+
+.order-card,
+.dish-admin-card,
+.form-panel {
+  margin-bottom: 18rpx;
+  padding: 24rpx;
+  border: 1rpx solid #dfe7e2;
+  border-radius: 8rpx;
+  background: #fff;
+}
+
+.order-head,
+.order-foot,
+.dish-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.order-id {
+  display: block;
+  color: #1f2933;
+  font-size: 26rpx;
+  font-weight: 700;
+}
+
+.order-time,
+.dish-meta,
+.dish-desc {
+  display: block;
+  margin-top: 8rpx;
+  color: #68737d;
+  font-size: 24rpx;
+  line-height: 1.45;
+}
+
+.status {
+  flex: 0 0 auto;
+  padding: 8rpx 16rpx;
+  border-radius: 999rpx;
+  font-size: 24rpx;
+}
+
+.status-pending {
+  background: #fff2d7;
+  color: #8a5b00;
+}
+
+.status-accepted {
+  background: #e7f0eb;
+  color: #1f7a5b;
+}
+
+.status-done {
+  background: #eef1f4;
+  color: #68737d;
+}
+
+.order-items {
+  margin-top: 18rpx;
+}
+
+.order-line {
+  display: flex;
+  justify-content: space-between;
+  padding: 8rpx 0;
+  font-size: 28rpx;
+}
+
+.order-note {
+  margin-top: 12rpx;
+  padding: 16rpx;
+  border-radius: 6rpx;
+  background: #fbfaf6;
+  color: #52606d;
+  font-size: 24rpx;
+}
+
+.order-foot {
+  margin-top: 18rpx;
+  font-weight: 700;
+}
+
+.order-actions,
+.dish-actions,
+.form-actions {
+  display: flex;
+  gap: 12rpx;
+}
+
+.form-panel input,
+.form-panel textarea {
+  width: 100%;
+  margin-bottom: 16rpx;
+  padding: 18rpx;
+  border: 1rpx solid #dfe7e2;
+  border-radius: 6rpx;
+  background: #fbfaf6;
+  font-size: 28rpx;
+}
+
+.form-panel textarea {
+  min-height: 128rpx;
+}
+
+.form-actions {
+  justify-content: flex-end;
+}
+
+.form-actions button {
+  min-width: 180rpx;
+  height: 64rpx;
+  line-height: 64rpx;
+}
+
+.dish-admin-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18rpx;
+}
+
+.dish-admin-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.dish-name {
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.dish-price {
+  color: #b4463a;
+  font-weight: 700;
+}
+
+.dish-actions {
+  flex: 0 0 auto;
+  flex-direction: column;
+}
+

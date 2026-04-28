@@ -1,0 +1,55 @@
+page {
+  min-height: 100%;
+  background: #fbfaf6;
+  color: #1f2933;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+}
+
+view,
+text,
+button,
+input,
+textarea {
+  box-sizing: border-box;
+}
+
+button {
+  margin: 0;
+  border-radius: 6px;
+  font-size: 28rpx;
+}
+
+button::after {
+  border: 0;
+}
+
+.page {
+  min-height: 100vh;
+  padding: 28rpx;
+}
+
+.section-title {
+  margin: 28rpx 0 16rpx;
+  font-size: 34rpx;
+  font-weight: 700;
+}
+
+.muted {
+  color: #68737d;
+}
+
+.primary-button {
+  background: #1f7a5b;
+  color: #fff;
+}
+
+.secondary-button {
+  background: #eef5f1;
+  color: #1f7a5b;
+}
+
+.danger-button {
+  background: #b4463a;
+  color: #fff;
+}
+

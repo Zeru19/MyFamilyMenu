@@ -1,0 +1,178 @@
+.menu-page {
+  padding-bottom: 176rpx;
+}
+
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32rpx;
+  border-radius: 8rpx;
+  background: #f1e7d4;
+}
+
+.eyebrow {
+  color: #6a5a41;
+  font-size: 24rpx;
+}
+
+.title {
+  margin-top: 8rpx;
+  font-size: 44rpx;
+  font-weight: 800;
+}
+
+.summary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 104rpx;
+  height: 104rpx;
+  border-radius: 52rpx;
+  background: #fff;
+  color: #1f7a5b;
+  font-weight: 700;
+}
+
+.summary text:first-child {
+  font-size: 36rpx;
+}
+
+.summary text:last-child {
+  font-size: 22rpx;
+}
+
+.dish-list {
+  margin-top: 24rpx;
+}
+
+.dish-card {
+  display: flex;
+  gap: 20rpx;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18rpx;
+  padding: 24rpx;
+  border: 1rpx solid #ebe2d5;
+  border-radius: 8rpx;
+  background: #fff;
+}
+
+.dish-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.dish-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.dish-name {
+  font-size: 32rpx;
+  font-weight: 700;
+}
+
+.dish-price {
+  color: #b4463a;
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.dish-category,
+.dish-desc {
+  display: block;
+  margin-top: 8rpx;
+  color: #68737d;
+  font-size: 24rpx;
+  line-height: 1.5;
+}
+
+.counter {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+}
+
+.counter-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56rpx;
+  height: 56rpx;
+  padding: 0;
+  border-radius: 28rpx;
+  background: #eef1f4;
+  color: #26323d;
+  line-height: 56rpx;
+}
+
+.counter-button.add {
+  background: #1f7a5b;
+  color: #fff;
+}
+
+.counter-value {
+  min-width: 32rpx;
+  text-align: center;
+  font-weight: 700;
+}
+
+.empty {
+  padding: 56rpx 0;
+  color: #68737d;
+  text-align: center;
+}
+
+.note-panel {
+  margin-top: 26rpx;
+}
+
+.note-panel textarea {
+  width: 100%;
+  min-height: 144rpx;
+  padding: 20rpx;
+  border: 1rpx solid #ebe2d5;
+  border-radius: 8rpx;
+  background: #fff;
+  font-size: 28rpx;
+}
+
+.checkout-bar {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 28rpx calc(20rpx + env(safe-area-inset-bottom));
+  border-top: 1rpx solid #e6dfd4;
+  background: #fff;
+}
+
+.checkout-label {
+  color: #68737d;
+  font-size: 24rpx;
+}
+
+.checkout-price {
+  color: #b4463a;
+  font-size: 38rpx;
+  font-weight: 800;
+}
+
+.checkout-actions {
+  display: flex;
+  gap: 16rpx;
+}
+
+.checkout-actions button {
+  width: 144rpx;
+  height: 72rpx;
+  line-height: 72rpx;
+}
+
