@@ -6,7 +6,15 @@ const emptyDishForm = {
   category: '',
   price: '',
   description: '',
+  image: '',
   available: true
+}
+
+function decorateDishes(dishes) {
+  return dishes.map((dish) => ({
+    ...dish,
+    firstChar: (dish.name || '?').slice(0, 1)
+  }))
 }
 
 Page({
@@ -28,9 +36,19 @@ Page({
 
   loadData() {
     this.setData({
-      dishes: store.getDishes(),
+      dishes: decorateDishes(store.getDishes()),
       orders: this.decorateOrders(store.getOrders())
     })
+    this.syncBadge()
+  },
+
+  syncBadge() {
+    const count = store.getPendingCount()
+    if (count > 0) {
+      wx.setTabBarBadge({ index: 1, text: String(count) })
+    } else {
+      wx.removeTabBarBadge({ index: 1 })
+    }
   },
 
   onDishInput(event) {
@@ -48,9 +66,9 @@ Page({
     const name = form.name.trim()
     const price = Number(form.price)
 
-    if (!name || !price || price < 0) {
+    if (!name || !price || price <= 0) {
       wx.showToast({
-        title: '请填写菜名和价格',
+        title: '请填写菜名和有效价格',
         icon: 'none'
       })
       return
@@ -62,6 +80,7 @@ Page({
       category: form.category.trim() || '未分类',
       price,
       description: form.description.trim(),
+      image: (form.image || '').trim(),
       available: form.available
     }
 
@@ -71,7 +90,7 @@ Page({
 
     store.saveDishes(dishes)
     this.setData({
-      dishes,
+      dishes: decorateDishes(dishes),
       dishForm: { ...emptyDishForm },
       editingDishId: ''
     })
@@ -93,16 +112,46 @@ Page({
     this.setData({
       editingDishId: id,
       dishForm: {
+        ...emptyDishForm,
         ...dish,
         price: String(dish.price)
       }
     })
+
+    wx.pageScrollTo({ scrollTop: 0, duration: 200 })
   },
 
   cancelEdit() {
     this.setData({
       dishForm: { ...emptyDishForm },
       editingDishId: ''
+    })
+  },
+
+  deleteDish(event) {
+    const id = event.currentTarget.dataset.id
+    const dish = this.data.dishes.find((item) => item.id === id)
+
+    if (!dish) {
+      return
+    }
+
+    wx.showModal({
+      title: '删除菜品',
+      content: `确定删除「${dish.name}」？`,
+      confirmColor: '#c0392b',
+      success: (res) => {
+        if (!res.confirm) {
+          return
+        }
+
+        const dishes = store.deleteDish(id)
+        const cancelEdit = this.data.editingDishId === id
+        this.setData({
+          dishes: decorateDishes(dishes),
+          ...(cancelEdit ? { dishForm: { ...emptyDishForm }, editingDishId: '' } : {})
+        })
+      }
     })
   },
 
@@ -120,15 +169,26 @@ Page({
     })
 
     store.saveDishes(dishes)
-    this.setData({ dishes })
+    this.setData({ dishes: decorateDishes(dishes) })
   },
 
   resetDishes() {
-    const dishes = store.resetDishes()
-    this.setData({
-      dishes,
-      dishForm: { ...emptyDishForm },
-      editingDishId: ''
+    wx.showModal({
+      title: '恢复默认菜品',
+      content: '将清空所有自定义菜品并恢复初始菜单，确定继续？',
+      confirmColor: '#c0392b',
+      success: (res) => {
+        if (!res.confirm) {
+          return
+        }
+
+        const dishes = store.resetDishes()
+        this.setData({
+          dishes: decorateDishes(dishes),
+          dishForm: { ...emptyDishForm },
+          editingDishId: ''
+        })
+      }
     })
   },
 
@@ -143,6 +203,7 @@ Page({
   updateStatus(orderId, status) {
     const orders = store.updateOrderStatus(orderId, status)
     this.setData({ orders: this.decorateOrders(orders) })
+    this.syncBadge()
   },
 
   decorateOrders(orders) {
@@ -153,7 +214,19 @@ Page({
   },
 
   clearOrders() {
-    store.clearOrders()
-    this.setData({ orders: [] })
+    wx.showModal({
+      title: '清空订单',
+      content: '将删除所有订单记录，确定继续？',
+      confirmColor: '#c0392b',
+      success: (res) => {
+        if (!res.confirm) {
+          return
+        }
+
+        store.clearOrders()
+        this.setData({ orders: [] })
+        this.syncBadge()
+      }
+    })
   }
 })

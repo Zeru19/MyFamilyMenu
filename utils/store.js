@@ -8,6 +8,7 @@ const defaultDishes = [
     category: '家常热菜',
     price: 18,
     description: '酸甜开胃，适合配米饭。',
+    image: '',
     available: true
   },
   {
@@ -16,6 +17,7 @@ const defaultDishes = [
     category: '家常热菜',
     price: 26,
     description: '微辣下饭，肉丝现炒。',
+    image: '',
     available: true
   },
   {
@@ -24,6 +26,7 @@ const defaultDishes = [
     category: '汤品',
     price: 12,
     description: '清淡热汤，可多人分享。',
+    image: '',
     available: true
   },
   {
@@ -32,6 +35,7 @@ const defaultDishes = [
     category: '主食',
     price: 2,
     description: '按碗计价。',
+    image: '',
     available: true
   }
 ]
@@ -48,7 +52,8 @@ function ensureSeedData() {
 
 function getDishes() {
   ensureSeedData()
-  return wx.getStorageSync(DISHES_KEY) || []
+  const dishes = wx.getStorageSync(DISHES_KEY) || []
+  return dishes.map((dish) => ({ image: '', ...dish }))
 }
 
 function saveDishes(dishes) {
@@ -99,8 +104,18 @@ function updateOrderStatus(orderId, status) {
   return orders
 }
 
+function deleteDish(id) {
+  const dishes = getDishes().filter((dish) => dish.id !== id)
+  saveDishes(dishes)
+  return dishes
+}
+
 function clearOrders() {
   wx.setStorageSync(ORDERS_KEY, [])
+}
+
+function getPendingCount() {
+  return getOrders().filter((o) => o.status === 'pending').length
 }
 
 function formatTime(date) {
@@ -117,9 +132,11 @@ module.exports = {
   getDishes,
   saveDishes,
   resetDishes,
+  deleteDish,
   getOrders,
   createOrder,
   updateOrderStatus,
-  clearOrders
+  clearOrders,
+  getPendingCount
 }
 

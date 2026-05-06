@@ -81,6 +81,9 @@ Page({
       note: this.data.note.trim()
     })
 
+    const pendingCount = store.getPendingCount()
+    wx.setTabBarBadge({ index: 1, text: String(pendingCount) })
+
     this.resetCart()
     wx.showToast({
       title: '已提交',
@@ -108,7 +111,8 @@ Page({
   decorateDishes(dishes, cart) {
     return dishes.map((dish) => ({
       ...dish,
-      count: cart[dish.id] || 0
+      count: cart[dish.id] || 0,
+      firstChar: (dish.name || '?').slice(0, 1)
     }))
   }
 })

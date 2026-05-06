@@ -1,16 +1,16 @@
 <view class="page service-page">
   <view class="topbar">
-    <view>
+    <view class="topbar-text">
       <text class="eyebrow">服务侧</text>
       <view class="title">订单与菜品</view>
     </view>
-    <button class="secondary-button refresh-button" bindtap="loadData">刷新</button>
+    <view class="ghost-btn small" bindtap="loadData">刷新</view>
   </view>
 
   <view class="section">
     <view class="section-head">
-      <text class="section-title">点餐请求</text>
-      <button class="danger-button mini-button" bindtap="clearOrders">清空</button>
+      <text class="section-title">点餐请求 · {{orders.length}}</text>
+      <view wx:if="{{orders.length}}" class="text-btn danger" bindtap="clearOrders">清空</view>
     </view>
 
     <view wx:if="{{!orders.length}}" class="empty">
@@ -19,24 +19,28 @@
 
     <view class="order-card" wx:for="{{orders}}" wx:key="id">
       <view class="order-head">
-        <view>
-          <text class="order-id">{{item.id}}</text>
+        <view class="order-head-left">
           <text class="order-time">{{item.createdAt}}</text>
+          <text class="order-id">{{item.id}}</text>
         </view>
         <text class="status status-{{item.status}}">{{item.statusLabel}}</text>
       </view>
+
       <view class="order-items">
         <view class="order-line" wx:for="{{item.items}}" wx:for-item="dish" wx:key="id">
-          <text>{{dish.name}} x {{dish.count}}</text>
-          <text>¥{{dish.subtotal}}</text>
+          <text class="order-line-name">{{dish.name}}</text>
+          <text class="order-line-count">×{{dish.count}}</text>
+          <text class="order-line-sub">¥{{dish.subtotal}}</text>
         </view>
       </view>
+
       <view wx:if="{{item.note}}" class="order-note">备注：{{item.note}}</view>
+
       <view class="order-foot">
-        <text>共 {{item.totalCount}} 份，¥{{item.totalPrice}}</text>
+        <text class="order-total">共 {{item.totalCount}} 份 · ¥{{item.totalPrice}}</text>
         <view class="order-actions">
-          <button wx:if="{{item.status === 'pending'}}" class="secondary-button mini-button" data-id="{{item.id}}" bindtap="acceptOrder">接单</button>
-          <button wx:if="{{item.status !== 'done'}}" class="primary-button mini-button" data-id="{{item.id}}" bindtap="finishOrder">完成</button>
+          <view wx:if="{{item.status === 'pending'}}" class="ghost-btn small" data-id="{{item.id}}" bindtap="acceptOrder">接单</view>
+          <view wx:if="{{item.status !== 'done'}}" class="primary-btn small" data-id="{{item.id}}" bindtap="finishOrder">完成</view>
         </view>
       </view>
     </view>
@@ -44,35 +48,49 @@
 
   <view class="section">
     <view class="section-head">
-      <text class="section-title">菜品维护</text>
-      <button class="secondary-button mini-button" bindtap="resetDishes">默认</button>
+      <text class="section-title">菜品维护 · {{dishes.length}}</text>
+      <view class="text-btn" bindtap="resetDishes">恢复默认</view>
     </view>
 
     <view class="form-panel">
-      <input value="{{dishForm.name}}" data-field="name" bindinput="onDishInput" placeholder="菜名" />
-      <input value="{{dishForm.category}}" data-field="category" bindinput="onDishInput" placeholder="分类" />
-      <input value="{{dishForm.price}}" data-field="price" bindinput="onDishInput" placeholder="价格" type="digit" />
-      <textarea value="{{dishForm.description}}" data-field="description" bindinput="onDishInput" placeholder="描述" maxlength="80" />
+      <view class="form-title">{{editingDishId ? '编辑菜品' : '新增菜品'}}</view>
+      <input class="form-input" value="{{dishForm.name}}" data-field="name" bindinput="onDishInput" placeholder="菜名" />
+      <view class="form-row">
+        <input class="form-input" value="{{dishForm.category}}" data-field="category" bindinput="onDishInput" placeholder="分类（如 热菜）" />
+        <input class="form-input" value="{{dishForm.price}}" data-field="price" bindinput="onDishInput" placeholder="价格" type="digit" />
+      </view>
+      <input class="form-input" value="{{dishForm.image}}" data-field="image" bindinput="onDishInput" placeholder="图片 URL（可留空，留空显示首字色块）" />
+      <textarea class="form-input form-textarea" value="{{dishForm.description}}" data-field="description" bindinput="onDishInput" placeholder="描述（最多 80 字）" maxlength="80" />
       <view class="form-actions">
-        <button wx:if="{{editingDishId}}" class="secondary-button" bindtap="cancelEdit">取消</button>
-        <button class="primary-button" bindtap="saveDish">{{editingDishId ? '保存修改' : '新增菜品'}}</button>
+        <view wx:if="{{editingDishId}}" class="ghost-btn" bindtap="cancelEdit">取消</view>
+        <view class="primary-btn" bindtap="saveDish">{{editingDishId ? '保存修改' : '新增菜品'}}</view>
       </view>
     </view>
 
     <view class="dish-admin-card" wx:for="{{dishes}}" wx:key="id">
-      <view class="dish-admin-main">
-        <view class="dish-row">
-          <text class="dish-name">{{item.name}}</text>
-          <text class="dish-price">¥{{item.price}}</text>
+      <view class="dish-admin-top">
+        <view class="dish-thumb">
+          <image wx:if="{{item.image}}" class="dish-thumb-img" src="{{item.image}}" mode="aspectFill" />
+          <view wx:else class="dish-thumb-fallback">
+            <text>{{item.firstChar}}</text>
+          </view>
         </view>
-        <text class="dish-meta">{{item.category}} · {{item.available ? '已上架' : '已下架'}}</text>
-        <text class="dish-desc">{{item.description}}</text>
+        <view class="dish-admin-main">
+          <view class="dish-head">
+            <text class="dish-name">{{item.name}}</text>
+            <text class="dish-price">¥{{item.price}}</text>
+          </view>
+          <view class="dish-meta-row">
+            <text class="dish-tag">{{item.category}}</text>
+            <text class="status-tag {{item.available ? 'on' : 'off'}}">{{item.available ? '已上架' : '已下架'}}</text>
+          </view>
+          <text wx:if="{{item.description}}" class="dish-desc">{{item.description}}</text>
+        </view>
       </view>
-      <view class="dish-actions">
-        <button class="secondary-button mini-button" data-id="{{item.id}}" bindtap="editDish">编辑</button>
-        <button class="mini-button {{item.available ? 'danger-button' : 'primary-button'}}" data-id="{{item.id}}" bindtap="toggleDish">
-          {{item.available ? '下架' : '上架'}}
-        </button>
+      <view class="dish-admin-actions">
+        <view class="ghost-btn small" data-id="{{item.id}}" bindtap="editDish">编辑</view>
+        <view class="ghost-btn small" data-id="{{item.id}}" bindtap="toggleDish">{{item.available ? '下架' : '上架'}}</view>
+        <view class="danger-btn small" data-id="{{item.id}}" bindtap="deleteDish">删除</view>
       </view>
     </view>
   </view>
