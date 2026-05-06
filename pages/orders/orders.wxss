@@ -1,0 +1,149 @@
+.orders-page {
+  padding: 0 24rpx 60rpx;
+}
+
+.topbar {
+  margin: 24rpx 0 8rpx;
+  padding: 32rpx;
+  border-radius: 20rpx;
+  background: linear-gradient(135deg, #fbe9c7, #f1cf95);
+  color: #4a3621;
+}
+
+.eyebrow {
+  display: block;
+  color: #7c5b34;
+  font-size: 24rpx;
+  letter-spacing: 4rpx;
+}
+
+.title {
+  margin-top: 8rpx;
+  font-size: 44rpx;
+  font-weight: 800;
+  color: #3a2814;
+}
+
+.subtitle {
+  display: block;
+  margin-top: 12rpx;
+  color: #7c5b34;
+  font-size: 26rpx;
+  line-height: 1.5;
+}
+
+.empty {
+  padding: 80rpx 0;
+  color: #68737d;
+  text-align: center;
+  font-size: 28rpx;
+}
+
+.order-card {
+  margin-top: 20rpx;
+  padding: 24rpx;
+  border-radius: 16rpx;
+  background: #fff;
+  box-shadow: 0 4rpx 16rpx rgba(31, 41, 51, 0.05);
+}
+
+.order-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.order-head-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+  min-width: 0;
+}
+
+.order-time {
+  color: #1f2933;
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.order-id {
+  color: #97a4ad;
+  font-size: 22rpx;
+}
+
+.status {
+  flex: 0 0 auto;
+  padding: 8rpx 18rpx;
+  border-radius: 999rpx;
+  font-size: 24rpx;
+}
+
+.status-pending { background: #fff2d7; color: #8a5b00; }
+.status-accepted { background: #e7f0eb; color: #1f7a5b; }
+.status-done { background: #eef1f4; color: #68737d; }
+.status-rejected { background: #fce6e3; color: #b4463a; }
+
+.order-items {
+  margin-top: 18rpx;
+  padding-top: 14rpx;
+  border-top: 1rpx dashed #e5ebe8;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.order-line {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  font-size: 28rpx;
+  color: #1f2933;
+}
+
+.order-line-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.order-line-count {
+  flex: 0 0 auto;
+  color: #68737d;
+  font-size: 26rpx;
+}
+
+.order-line-sub {
+  flex: 0 0 auto;
+  color: #b4463a;
+  font-weight: 700;
+}
+
+.order-note {
+  margin-top: 14rpx;
+  padding: 14rpx 16rpx;
+  border-radius: 10rpx;
+  background: #fbf5e7;
+  color: #6b5b35;
+  font-size: 26rpx;
+  line-height: 1.5;
+}
+
+.order-reject {
+  margin-top: 14rpx;
+  padding: 14rpx 16rpx;
+  border-radius: 10rpx;
+  background: #fce6e3;
+  color: #b4463a;
+  font-size: 26rpx;
+  line-height: 1.5;
+}
+
+.order-foot {
+  margin-top: 16rpx;
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1f2933;
+}

@@ -105,6 +105,7 @@
 .status-pending { background: #fff2d7; color: #8a5b00; }
 .status-accepted { background: #e7f0eb; color: #1f7a5b; }
 .status-done { background: #eef1f4; color: #68737d; }
+.status-rejected { background: #fce6e3; color: #b4463a; }
 
 .order-items {
   margin-top: 18rpx;
@@ -153,6 +154,16 @@
   line-height: 1.5;
 }
 
+.order-reject {
+  margin-top: 14rpx;
+  padding: 14rpx 16rpx;
+  border-radius: 10rpx;
+  background: #fce6e3;
+  color: #b4463a;
+  font-size: 26rpx;
+  line-height: 1.5;
+}
+
 .order-foot {
   margin-top: 16rpx;
   display: flex;
@@ -183,41 +194,62 @@
 }
 
 .form-title {
-  font-size: 28rpx;
+  font-size: 30rpx;
   font-weight: 700;
-  margin-bottom: 16rpx;
+  margin-bottom: 20rpx;
   color: #1f2933;
+}
+
+.form-field {
+  margin-bottom: 20rpx;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 10rpx;
+  color: #4a5560;
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.form-label .required {
+  color: #b4463a;
+  margin-left: 4rpx;
+}
+
+.form-hint {
+  display: block;
+  margin-top: 8rpx;
+  color: #97a4ad;
+  font-size: 22rpx;
+  line-height: 1.4;
 }
 
 .form-input {
   width: 100%;
-  padding: 18rpx 20rpx;
-  margin-bottom: 14rpx;
-  border-radius: 12rpx;
+  min-height: 76rpx;
+  padding: 18rpx 22rpx;
+  border-radius: 14rpx;
   background: #f6f7f9;
   font-size: 28rpx;
+  line-height: 1.4;
 }
 
 .form-textarea {
-  min-height: 128rpx;
+  min-height: 144rpx;
   line-height: 1.5;
 }
 
-.form-row {
-  display: flex;
-  gap: 14rpx;
-}
-
-.form-row .form-input {
-  flex: 1 1 0;
-  min-width: 0;
+.form-placeholder {
+  color: #aab2b9;
+  font-size: 28rpx;
 }
 
 .form-actions {
   display: flex;
   justify-content: flex-end;
   gap: 14rpx;
-  margin-top: 6rpx;
+  margin-top: 8rpx;
 }
 
 /* buttons (view-based) */

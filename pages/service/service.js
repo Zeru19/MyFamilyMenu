@@ -1,7 +1,7 @@
 const store = require('../../utils/store')
 
 const emptyDishForm = {
-  id: '',
+  _id: '',
   name: '',
   category: '',
   price: '',
@@ -17,8 +17,35 @@ function decorateDishes(dishes) {
   }))
 }
 
+function decorateOrders(orders, statusText) {
+  return orders.map((order) => ({
+    ...order,
+    statusLabel: statusText[order.status] || order.status,
+    createdAtLabel: formatTime(order.createdAt)
+  }))
+}
+
+function showError(title, err) {
+  console.error(title, err)
+  const msg = (err && (err.errMsg || err.message)) || JSON.stringify(err || {})
+  wx.showModal({
+    title,
+    content: `${msg}\n\n请检查云开发控制台是否已创建 dishes / orders 集合，并把权限设为自定义规则 {"read": true, "write": true}`,
+    showCancel: false,
+    confirmText: '知道了'
+  })
+}
+
+function formatTime(value) {
+  const date = value instanceof Date ? value : new Date(value)
+  if (isNaN(date.getTime())) return ''
+  const pad = (v) => String(v).padStart(2, '0')
+  return `${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`
+}
+
 Page({
   data: {
+    loading: true,
     dishes: [],
     orders: [],
     dishForm: { ...emptyDishForm },
@@ -26,7 +53,8 @@ Page({
     statusText: {
       pending: '待接单',
       accepted: '制作中',
-      done: '已完成'
+      done: '已完成',
+      rejected: '已拒绝'
     }
   },
 
@@ -34,21 +62,35 @@ Page({
     this.loadData()
   },
 
+  onPullDownRefresh() {
+    this.loadData().then(() => wx.stopPullDownRefresh())
+  },
+
   loadData() {
-    this.setData({
-      dishes: decorateDishes(store.getDishes()),
-      orders: this.decorateOrders(store.getOrders())
-    })
-    this.syncBadge()
+    this.setData({ loading: true })
+    return Promise.all([store.listDishes(), store.listAllOrders()])
+      .then(([dishes, orders]) => {
+        this.setData({
+          dishes: decorateDishes(dishes),
+          orders: decorateOrders(orders, this.data.statusText),
+          loading: false
+        })
+        this.syncBadge()
+      })
+      .catch((err) => {
+        this.setData({ loading: false })
+        showError('加载失败', err)
+      })
   },
 
   syncBadge() {
-    const count = store.getPendingCount()
-    if (count > 0) {
-      wx.setTabBarBadge({ index: 1, text: String(count) })
-    } else {
-      wx.removeTabBarBadge({ index: 1 })
-    }
+    store.getPendingCount().then((count) => {
+      if (count > 0) {
+        wx.setTabBarBadge({ index: 2, text: String(count) })
+      } else {
+        wx.removeTabBarBadge({ index: 2 })
+      }
+    }).catch(() => {})
   },
 
   onDishInput(event) {
@@ -67,47 +109,38 @@ Page({
     const price = Number(form.price)
 
     if (!name || !price || price <= 0) {
-      wx.showToast({
-        title: '请填写菜名和有效价格',
-        icon: 'none'
-      })
+      wx.showToast({ title: '请填写菜名和有效价格', icon: 'none' })
       return
     }
 
-    const nextDish = {
-      id: form.id || `dish_${Date.now()}`,
+    const payload = {
       name,
       category: form.category.trim() || '未分类',
       price,
-      description: form.description.trim(),
+      description: (form.description || '').trim(),
       image: (form.image || '').trim(),
-      available: form.available
+      available: form.available !== false
     }
+    if (form._id) payload._id = form._id
 
-    const dishes = this.data.editingDishId
-      ? this.data.dishes.map((dish) => (dish.id === this.data.editingDishId ? nextDish : dish))
-      : [nextDish].concat(this.data.dishes)
-
-    store.saveDishes(dishes)
-    this.setData({
-      dishes: decorateDishes(dishes),
-      dishForm: { ...emptyDishForm },
-      editingDishId: ''
-    })
-
-    wx.showToast({
-      title: '已保存',
-      icon: 'success'
-    })
+    wx.showLoading({ title: '保存中', mask: true })
+    store.saveDish(payload)
+      .then(() => {
+        wx.hideLoading()
+        this.setData({ dishForm: { ...emptyDishForm }, editingDishId: '' })
+        wx.showToast({ title: '已保存', icon: 'success' })
+        return this.loadData()
+      })
+      .catch((err) => {
+        wx.hideLoading()
+        showError('保存失败', err)
+      })
   },
 
   editDish(event) {
     const id = event.currentTarget.dataset.id
-    const dish = this.data.dishes.find((item) => item.id === id)
-
-    if (!dish) {
-      return
-    }
+    const dish = this.data.dishes.find((item) => item._id === id)
+    if (!dish) return
 
     this.setData({
       editingDishId: id,
@@ -122,72 +155,73 @@ Page({
   },
 
   cancelEdit() {
-    this.setData({
-      dishForm: { ...emptyDishForm },
-      editingDishId: ''
-    })
+    this.setData({ dishForm: { ...emptyDishForm }, editingDishId: '' })
   },
 
   deleteDish(event) {
     const id = event.currentTarget.dataset.id
-    const dish = this.data.dishes.find((item) => item.id === id)
-
-    if (!dish) {
-      return
-    }
+    const dish = this.data.dishes.find((item) => item._id === id)
+    if (!dish) return
 
     wx.showModal({
       title: '删除菜品',
       content: `确定删除「${dish.name}」？`,
       confirmColor: '#c0392b',
       success: (res) => {
-        if (!res.confirm) {
-          return
-        }
+        if (!res.confirm) return
 
-        const dishes = store.deleteDish(id)
-        const cancelEdit = this.data.editingDishId === id
-        this.setData({
-          dishes: decorateDishes(dishes),
-          ...(cancelEdit ? { dishForm: { ...emptyDishForm }, editingDishId: '' } : {})
-        })
+        wx.showLoading({ title: '删除中', mask: true })
+        store.deleteDish(id)
+          .then(() => {
+            wx.hideLoading()
+            const cancelEdit = this.data.editingDishId === id
+            if (cancelEdit) {
+              this.setData({ dishForm: { ...emptyDishForm }, editingDishId: '' })
+            }
+            return this.loadData()
+          })
+          .catch((err) => {
+            wx.hideLoading()
+            showError('删除失败', err)
+          })
       }
     })
   },
 
   toggleDish(event) {
     const id = event.currentTarget.dataset.id
-    const dishes = this.data.dishes.map((dish) => {
-      if (dish.id !== id) {
-        return dish
-      }
+    const dish = this.data.dishes.find((item) => item._id === id)
+    if (!dish) return
 
-      return {
-        ...dish,
-        available: !dish.available
-      }
-    })
-
-    store.saveDishes(dishes)
-    this.setData({ dishes: decorateDishes(dishes) })
+    wx.showLoading({ title: dish.available ? '下架中' : '上架中', mask: true })
+    store.saveDish({ ...dish, available: !dish.available })
+      .then(() => {
+        wx.hideLoading()
+        return this.loadData()
+      })
+      .catch((err) => {
+        wx.hideLoading()
+        showError('操作失败', err)
+      })
   },
 
-  resetDishes() {
+  seedDishes() {
     wx.showModal({
-      title: '恢复默认菜品',
-      content: '将清空所有自定义菜品并恢复初始菜单，确定继续？',
-      confirmColor: '#c0392b',
+      title: '添加示例菜品',
+      content: '将插入 4 个默认菜品到云数据库，可在之后编辑或删除。',
       success: (res) => {
-        if (!res.confirm) {
-          return
-        }
+        if (!res.confirm) return
 
-        const dishes = store.resetDishes()
-        this.setData({
-          dishes: decorateDishes(dishes),
-          dishForm: { ...emptyDishForm },
-          editingDishId: ''
-        })
+        wx.showLoading({ title: '添加中', mask: true })
+        store.seedDefaultDishes()
+          .then(() => {
+            wx.hideLoading()
+            return this.loadData()
+          })
+          .catch((err) => {
+            wx.hideLoading()
+            showError('添加失败', err)
+          })
       }
     })
   },
@@ -200,17 +234,33 @@ Page({
     this.updateStatus(event.currentTarget.dataset.id, 'done')
   },
 
-  updateStatus(orderId, status) {
-    const orders = store.updateOrderStatus(orderId, status)
-    this.setData({ orders: this.decorateOrders(orders) })
-    this.syncBadge()
+  rejectOrder(event) {
+    const id = event.currentTarget.dataset.id
+    wx.showModal({
+      title: '拒绝订单',
+      editable: true,
+      placeholderText: '请输入拒绝理由（可留空）',
+      confirmText: '确定拒绝',
+      confirmColor: '#b4463a',
+      success: (res) => {
+        if (!res.confirm) return
+        const reason = (res.content || '').trim()
+        this.updateStatus(id, 'rejected', { rejectReason: reason })
+      }
+    })
   },
 
-  decorateOrders(orders) {
-    return orders.map((order) => ({
-      ...order,
-      statusLabel: this.data.statusText[order.status] || order.status
-    }))
+  updateStatus(orderId, status, extra) {
+    wx.showLoading({ title: '更新中', mask: true })
+    store.updateOrderStatus(orderId, status, extra)
+      .then(() => {
+        wx.hideLoading()
+        return this.loadData()
+      })
+      .catch((err) => {
+        wx.hideLoading()
+        showError('更新失败', err)
+      })
   },
 
   clearOrders() {
@@ -219,13 +269,18 @@ Page({
       content: '将删除所有订单记录，确定继续？',
       confirmColor: '#c0392b',
       success: (res) => {
-        if (!res.confirm) {
-          return
-        }
+        if (!res.confirm) return
 
-        store.clearOrders()
-        this.setData({ orders: [] })
-        this.syncBadge()
+        wx.showLoading({ title: '清空中', mask: true })
+        store.clearAllOrders()
+          .then(() => {
+            wx.hideLoading()
+            return this.loadData()
+          })
+          .catch((err) => {
+            wx.hideLoading()
+            showError('清空失败', err)
+          })
       }
     })
   }

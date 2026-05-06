@@ -32,8 +32,9 @@
   },
   "compileType": "miniprogram",
   "libVersion": "latest",
-  "appid": "wxd7d43472b3f3024a",
+  "appid": "YOUR_WX_APPID",
   "projectname": "family_menu",
+  "cloudfunctionRoot": "cloudfunctions/",
   "condition": {},
   "simulatorPluginLibVersion": {},
   "editorSetting": {}

@@ -2,6 +2,7 @@ const store = require('../../utils/store')
 
 Page({
   data: {
+    loading: true,
     dishes: [],
     cart: {},
     note: '',
@@ -11,12 +12,27 @@ Page({
 
   onShow() {
     this.loadDishes()
-    this.recalculate()
+  },
+
+  onPullDownRefresh() {
+    this.loadDishes().then(() => wx.stopPullDownRefresh())
   },
 
   loadDishes() {
-    const dishes = store.getDishes().filter((dish) => dish.available)
-    this.setData({ dishes: this.decorateDishes(dishes, this.data.cart) })
+    this.setData({ loading: true })
+    return store.listAvailableDishes()
+      .then((dishes) => {
+        this.setData({
+          dishes: this.decorateDishes(dishes, this.data.cart),
+          loading: false
+        })
+        this.recalculate()
+      })
+      .catch((err) => {
+        console.error(err)
+        this.setData({ loading: false })
+        wx.showToast({ title: '加载失败', icon: 'none' })
+      })
   },
 
   increase(event) {
@@ -51,44 +67,44 @@ Page({
       cart: {},
       note: '',
       totalCount: 0,
-      totalPrice: 0
+      totalPrice: 0,
+      dishes: this.decorateDishes(this.data.dishes, {})
     })
   },
 
   submitOrder() {
     if (!this.data.totalCount) {
-      wx.showToast({
-        title: '请先选择菜品',
-        icon: 'none'
-      })
+      wx.showToast({ title: '请先选择菜品', icon: 'none' })
       return
     }
 
     const items = this.data.dishes
-      .filter((dish) => this.data.cart[dish.id])
+      .filter((dish) => this.data.cart[dish._id])
       .map((dish) => ({
-        id: dish.id,
+        _id: dish._id,
         name: dish.name,
         price: Number(dish.price),
-        count: this.data.cart[dish.id],
-        subtotal: Number(dish.price) * this.data.cart[dish.id]
+        count: this.data.cart[dish._id],
+        subtotal: Number(dish.price) * this.data.cart[dish._id]
       }))
 
+    wx.showLoading({ title: '提交中', mask: true })
     store.createOrder({
       items,
       totalCount: this.data.totalCount,
       totalPrice: this.data.totalPrice,
       note: this.data.note.trim()
     })
-
-    const pendingCount = store.getPendingCount()
-    wx.setTabBarBadge({ index: 1, text: String(pendingCount) })
-
-    this.resetCart()
-    wx.showToast({
-      title: '已提交',
-      icon: 'success'
-    })
+      .then(() => {
+        wx.hideLoading()
+        this.resetCart()
+        wx.showToast({ title: '已提交', icon: 'success' })
+      })
+      .catch((err) => {
+        wx.hideLoading()
+        console.error(err)
+        wx.showToast({ title: '提交失败', icon: 'none' })
+      })
   },
 
   recalculate() {
@@ -96,7 +112,7 @@ Page({
     let totalPrice = 0
 
     this.data.dishes.forEach((dish) => {
-      const count = this.data.cart[dish.id] || 0
+      const count = this.data.cart[dish._id] || 0
       totalCount += count
       totalPrice += Number(dish.price) * count
     })
@@ -111,7 +127,7 @@ Page({
   decorateDishes(dishes, cart) {
     return dishes.map((dish) => ({
       ...dish,
-      count: cart[dish.id] || 0,
+      count: cart[dish._id] || 0,
       firstChar: (dish.name || '?').slice(0, 1)
     }))
   }

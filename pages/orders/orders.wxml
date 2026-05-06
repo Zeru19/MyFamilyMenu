@@ -1,0 +1,37 @@
+<view class="page orders-page">
+  <view class="topbar">
+    <text class="eyebrow">点餐记录</text>
+    <view class="title">我的订单</view>
+    <text class="subtitle">下拉刷新以查看最新状态</text>
+  </view>
+
+  <view wx:if="{{loading && !orders.length}}" class="empty">加载中…</view>
+  <view wx:elif="{{!orders.length}}" class="empty">还没有订单，去点餐试试吧</view>
+
+  <view class="order-card" wx:for="{{orders}}" wx:key="_id">
+    <view class="order-head">
+      <view class="order-head-left">
+        <text class="order-time">{{item.createdAtLabel}}</text>
+        <text class="order-id">{{item._id}}</text>
+      </view>
+      <text class="status status-{{item.status}}">{{item.statusLabel}}</text>
+    </view>
+
+    <view class="order-items">
+      <view class="order-line" wx:for="{{item.items}}" wx:for-item="dish" wx:key="_id">
+        <text class="order-line-name">{{dish.name}}</text>
+        <text class="order-line-count">×{{dish.count}}</text>
+        <text class="order-line-sub">¥{{dish.subtotal}}</text>
+      </view>
+    </view>
+
+    <view wx:if="{{item.note}}" class="order-note">备注：{{item.note}}</view>
+    <view wx:if="{{item.status === 'rejected'}}" class="order-reject">
+      拒绝原因：{{item.rejectReason || '商家未填写'}}
+    </view>
+
+    <view class="order-foot">
+      <text class="order-total">共 {{item.totalCount}} 份 · ¥{{item.totalPrice}}</text>
+    </view>
+  </view>
+</view>

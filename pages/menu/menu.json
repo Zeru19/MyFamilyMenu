@@ -1,4 +1,5 @@
 {
-  "navigationBarTitleText": "家庭点餐"
+  "navigationBarTitleText": "家庭点餐",
+  "enablePullDownRefresh": true
 }
 

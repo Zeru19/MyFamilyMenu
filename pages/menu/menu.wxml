@@ -5,8 +5,12 @@
     <text class="subtitle">点选喜欢的菜，提交后家里就开做啦</text>
   </view>
 
-  <view class="dish-list">
-    <view class="dish-card" wx:for="{{dishes}}" wx:key="id">
+  <view wx:if="{{loading}}" class="empty">加载中…</view>
+
+  <view wx:elif="{{!dishes.length}}" class="empty">暂无可点菜品</view>
+
+  <view wx:else class="dish-list">
+    <view class="dish-card" wx:for="{{dishes}}" wx:key="_id">
       <view class="dish-thumb">
         <image wx:if="{{item.image}}" class="dish-thumb-img" src="{{item.image}}" mode="aspectFill" />
         <view wx:else class="dish-thumb-fallback">
@@ -22,17 +26,13 @@
         <text wx:if="{{item.description}}" class="dish-desc">{{item.description}}</text>
         <view class="dish-bottom">
           <view class="counter">
-            <view wx:if="{{item.count}}" class="counter-button minus" data-id="{{item.id}}" bindtap="decrease">-</view>
+            <view wx:if="{{item.count}}" class="counter-button minus" data-id="{{item._id}}" bindtap="decrease">-</view>
             <text wx:if="{{item.count}}" class="counter-value">{{item.count}}</text>
-            <view class="counter-button add" data-id="{{item.id}}" bindtap="increase">+</view>
+            <view class="counter-button add" data-id="{{item._id}}" bindtap="increase">+</view>
           </view>
         </view>
       </view>
     </view>
-  </view>
-
-  <view wx:if="{{!dishes.length}}" class="empty">
-    <text>暂无可点菜品</text>
   </view>
 
   <view class="note-panel">

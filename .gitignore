@@ -1,4 +1,6 @@
 project.private.config.json
+project.config.json
+cloudEnv.js
 .DS_Store
 node_modules/
 miniprogram_npm/

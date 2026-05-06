@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/menu/menu",
+    "pages/orders/orders",
     "pages/service/service"
   ],
   "window": {
@@ -20,6 +21,10 @@
         "text": "点餐"
       },
       {
+        "pagePath": "pages/orders/orders",
+        "text": "我的订单"
+      },
+      {
         "pagePath": "pages/service/service",
         "text": "服务"
       }
@@ -28,4 +33,3 @@
   "style": "v2",
   "sitemapLocation": "sitemap.json"
 }
-
