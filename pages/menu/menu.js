@@ -11,6 +11,8 @@ Page({
   },
 
   onShow() {
+    const tabBar = typeof this.getTabBar === 'function' ? this.getTabBar() : null
+    if (tabBar && typeof tabBar.refresh === 'function') tabBar.refresh()
     this.loadDishes()
   },
 

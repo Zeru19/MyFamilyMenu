@@ -18,10 +18,7 @@
 
     <view class="order-card" wx:for="{{orders}}" wx:key="_id">
       <view class="order-head">
-        <view class="order-head-left">
-          <text class="order-time">{{item.createdAtLabel}}</text>
-          <text class="order-id">{{item._id}}</text>
-        </view>
+        <text class="order-id">{{item._id}}</text>
         <text class="status status-{{item.status}}">{{item.statusLabel}}</text>
       </view>
 
@@ -30,6 +27,25 @@
           <text class="order-line-name">{{dish.name}}</text>
           <text class="order-line-count">×{{dish.count}}</text>
           <text class="order-line-sub">¥{{dish.subtotal}}</text>
+        </view>
+      </view>
+
+      <view class="order-timeline">
+        <view class="order-timeline-row">
+          <text class="order-timeline-label">下单</text>
+          <text class="order-timeline-value">{{item.createdAtLabel}}</text>
+        </view>
+        <view wx:if="{{item.acceptedAtLabel}}" class="order-timeline-row">
+          <text class="order-timeline-label">接单</text>
+          <text class="order-timeline-value">{{item.acceptedAtLabel}}</text>
+        </view>
+        <view wx:if="{{item.doneAtLabel}}" class="order-timeline-row">
+          <text class="order-timeline-label">完成</text>
+          <text class="order-timeline-value">{{item.doneAtLabel}}</text>
+        </view>
+        <view wx:if="{{item.rejectedAtLabel}}" class="order-timeline-row">
+          <text class="order-timeline-label">拒绝</text>
+          <text class="order-timeline-value">{{item.rejectedAtLabel}}</text>
         </view>
       </view>
 

@@ -4,3 +4,9 @@ cloudEnv.js
 .DS_Store
 node_modules/
 miniprogram_npm/
+cloudfunctions/*/node_modules/
+
+# Local planning artefacts (contain absolute paths / personal context)
+findings.md
+progress.md
+task_plan.md

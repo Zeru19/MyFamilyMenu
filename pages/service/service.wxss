@@ -107,6 +107,35 @@
 .status-done { background: #eef1f4; color: #68737d; }
 .status-rejected { background: #fce6e3; color: #b4463a; }
 
+.order-timeline {
+  margin-top: 14rpx;
+  padding: 14rpx 16rpx;
+  border-radius: 10rpx;
+  background: #f7f8fa;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.order-timeline-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  font-size: 24rpx;
+  color: #52606d;
+  line-height: 1.5;
+}
+
+.order-timeline-label {
+  flex: 0 0 64rpx;
+  color: #97a4ad;
+}
+
+.order-timeline-value {
+  color: #1f2933;
+  font-feature-settings: "tnum";
+}
+
 .order-items {
   margin-top: 18rpx;
   padding-top: 14rpx;

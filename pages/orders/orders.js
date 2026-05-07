@@ -21,6 +21,8 @@ Page({
   },
 
   onShow() {
+    const tabBar = typeof this.getTabBar === 'function' ? this.getTabBar() : null
+    if (tabBar && typeof tabBar.refresh === 'function') tabBar.refresh()
     this.loadOrders()
   },
 
@@ -45,7 +47,10 @@ Page({
           .map((o) => ({
             ...o,
             statusLabel: STATUS_TEXT[o.status] || o.status,
-            createdAtLabel: formatTime(o.createdAt)
+            createdAtLabel: formatTime(o.createdAt),
+            acceptedAtLabel: formatTime(o.acceptedAt),
+            doneAtLabel: formatTime(o.doneAt),
+            rejectedAtLabel: formatTime(o.rejectedAt)
           }))
         this.setData({ orders: ordered, loading: false })
       })

@@ -21,7 +21,10 @@ function decorateOrders(orders, statusText) {
   return orders.map((order) => ({
     ...order,
     statusLabel: statusText[order.status] || order.status,
-    createdAtLabel: formatTime(order.createdAt)
+    createdAtLabel: formatTime(order.createdAt),
+    acceptedAtLabel: formatTime(order.acceptedAt),
+    doneAtLabel: formatTime(order.doneAt),
+    rejectedAtLabel: formatTime(order.rejectedAt)
   }))
 }
 
@@ -59,6 +62,13 @@ Page({
   },
 
   onShow() {
+    const app = getApp()
+    if (app.globalData.roleReady && !app.globalData.isAdmin) {
+      wx.switchTab({ url: '/pages/menu/menu' })
+      return
+    }
+    const tabBar = typeof this.getTabBar === 'function' ? this.getTabBar() : null
+    if (tabBar && typeof tabBar.refresh === 'function') tabBar.refresh()
     this.loadData()
   },
 
@@ -84,13 +94,8 @@ Page({
   },
 
   syncBadge() {
-    store.getPendingCount().then((count) => {
-      if (count > 0) {
-        wx.setTabBarBadge({ index: 2, text: String(count) })
-      } else {
-        wx.removeTabBarBadge({ index: 2 })
-      }
-    }).catch(() => {})
+    const tabBar = typeof this.getTabBar === 'function' ? this.getTabBar() : null
+    if (tabBar && typeof tabBar.refreshBadge === 'function') tabBar.refreshBadge()
   },
 
   onDishInput(event) {
@@ -227,11 +232,15 @@ Page({
   },
 
   acceptOrder(event) {
-    this.updateStatus(event.currentTarget.dataset.id, 'accepted')
+    this.updateStatus(event.currentTarget.dataset.id, 'accepted', {
+      acceptedAt: wx.cloud.database().serverDate()
+    })
   },
 
   finishOrder(event) {
-    this.updateStatus(event.currentTarget.dataset.id, 'done')
+    this.updateStatus(event.currentTarget.dataset.id, 'done', {
+      doneAt: wx.cloud.database().serverDate()
+    })
   },
 
   rejectOrder(event) {
@@ -245,7 +254,10 @@ Page({
       success: (res) => {
         if (!res.confirm) return
         const reason = (res.content || '').trim()
-        this.updateStatus(id, 'rejected', { rejectReason: reason })
+        this.updateStatus(id, 'rejected', {
+          rejectReason: reason,
+          rejectedAt: wx.cloud.database().serverDate()
+        })
       }
     })
   },
